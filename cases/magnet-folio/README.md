@@ -14,8 +14,9 @@ and all of the behaviour is in the client JS). The reference runs GSAP 3.9.1 + S
 Locomotive Scroll, Barba 2 and jQuery 3.5. This case runs on none of them.
 
 **What is faithful:** every mechanism, timing, easing and geometry ratio below comes from the
-reference source. **What is adapted:** the identity. The name, copy, palette, portrait, project names
-and project screens are all invented here. The reference's photograph is replaced by a drawn portrait,
+reference source. **What is adapted:** the identity. The name, role, location, copy and contact
+details are the site owner's own (Adiel Rakover, Tel Aviv). The palette, portrait, project names and
+project screens are placeholders until real assets arrive. The reference's photograph is replaced by a drawn portrait,
 and its project videos are replaced by drawn device screens. Per `SKILL.md` § Replicate Mode, nothing
 identifying the reference's owner is carried over.
 
@@ -188,7 +189,7 @@ re-park. The two-copy marquee with an eased timeScale. The frame-rate-independen
 - *The section order* (hero → statement → list → more → strips → contact). It follows from a
   freelancer's argument: who I am, what I believe, proof, more proof, ask. Reorder it for a different
   argument.
-- *The copy and name.* Invented. Never ship a clone's identity.
+- *The copy and name.* The owner's own. Never ship a clone's identity.
 
 ---
 
