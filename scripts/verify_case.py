@@ -78,6 +78,12 @@ def main():
                     help="stop-motion turnaround: the cut must be HARD (one frame at "
                          "opacity 1, no in-between) while the scrub stays CONTINUOUS "
                          "(a real sweep visits every frame in order, skipping none).")
+    ap.add_argument("--folio", action="store_true",
+                    help="magnetic portfolio: every check is driven by the REAL mouse/wheel. "
+                         "A magnet must both TRACK the pointer (offset ~ strength x normalised "
+                         "position) and RING on leave (overshoot past 0, then settle); the "
+                         "marquee must follow scroll direction WITHOUT snapping; the preview's "
+                         "three followers must lag in order (image > dot) AND converge.")
     ap.add_argument("--follow", action="store_true",
                     help="pointer-led crowd: aim at several points across the canvas and "
                          "require the centroid to CLOSE ON the aim from every one of them. "
@@ -599,6 +605,85 @@ def main():
                 if caught and not marked:
                     fails.append(f"--lyre: {caught} captures were counted but no tail carries the "
                                  f"caught text — the rewrite is not using the word it caught")
+
+        if args.folio:
+            need = ("marquee", "magnet", "preview", "loaded")
+            if not pg.evaluate("(n)=>!!window.__probe && n.every(k=>k in __probe)", list(need)):
+                fails.append(f"--folio given but __probe is missing one of {need}")
+            else:
+                pg.set_viewport_size({"width": 1440, "height": 900})
+                for _ in range(80):
+                    if pg.evaluate("()=>__probe.loaded()"): break
+                    pg.wait_for_timeout(100)
+                # 1 · magnet: track AND ring --------------------------------------
+                sel = ".intro .btn-round .btn-click"
+                pg.evaluate("(s)=>document.querySelector(s).scrollIntoView({block:'center'})", sel)
+                pg.wait_for_timeout(400)
+                bx = pg.evaluate("(s)=>{const e=document.querySelector(s),r=e.getBoundingClientRect();"
+                                 "return [r.x,r.y,e.offsetWidth,e.offsetHeight,+e.dataset.strength,+e.dataset.strengthText]}", sel)
+                x0, y0, w, h, st, stt = bx
+                pg.mouse.move(x0 - 40, y0 + h/2); pg.wait_for_timeout(100)
+                # aim INSIDE the disc: a bounding-box corner of a round button is outside it
+                pg.mouse.move(x0 + w*.75, y0 + h*.7, steps=8); pg.wait_for_timeout(1500)
+                m = pg.evaluate("(s)=>__probe.magnet(s)", sel)
+                # target is (.75-.5, .7-.5) x strength: the handler cancels its own transform
+                ex, ey = .25*st, .2*st
+                print(f"        magnet track ({m['x']:.1f},{m['y']:.1f}) want ({ex:.0f},{ey:.0f}); "
+                      f"text ({m['ix']:.1f},{m['iy']:.1f}) want ({.25*stt:.0f},{.2*stt:.0f})")
+                if abs(m["x"]-ex) > .15*st or abs(m["y"]-ey) > .15*st:
+                    fails.append(f"--folio: magnet did not track the pointer: ({m['x']:.1f},{m['y']:.1f}) vs ({ex:.0f},{ey:.0f})")
+                if not (0 < m["ix"] < m["x"]):
+                    fails.append("--folio: label does not lag its disc (text offset must be >0 and < disc offset)")
+                pg.mouse.move(x0 + w + 260, y0 + h/2, steps=2)
+                xs = []
+                for _ in range(50):
+                    xs.append(pg.evaluate("(s)=>__probe.magnet(s).x", sel)); pg.wait_for_timeout(30)
+                lo, last = min(xs), xs[-1]
+                pg.wait_for_timeout(800); rest = pg.evaluate("(s)=>__probe.magnet(s)", sel)
+                print(f"        magnet leave: min x {lo:.2f}  rest ({rest['x']:.2f},{rest['y']:.2f})")
+                if lo > -1:
+                    fails.append(f"--folio: magnet returned without ringing (min x {lo:.2f} > -1) — leave spring is over-damped")
+                if abs(rest["x"]) > .5 or abs(rest["y"]) > .5:
+                    fails.append(f"--folio: magnet never settled ({rest['x']:.2f},{rest['y']:.2f})")
+                # 2 · marquee: follows direction, never snaps --------------------
+                pg.mouse.move(720, 450)
+                for _ in range(4): pg.mouse.wheel(0, 200); pg.wait_for_timeout(60)
+                pg.wait_for_timeout(900)
+                a = pg.evaluate("()=>__probe.marquee()")
+                pg.mouse.wheel(0, -300); pg.wait_for_timeout(90)
+                mid = pg.evaluate("()=>__probe.marquee()")
+                pg.wait_for_timeout(1300)
+                c1 = pg.evaluate("()=>__probe.marquee()"); pg.wait_for_timeout(300)
+                c2 = pg.evaluate("()=>__probe.marquee()")
+                print(f"        marquee ts down {a['ts']:.2f} -> 90ms after reversal {mid['ts']:.2f} -> {c1['ts']:.2f}")
+                if a["ts"] < .9: fails.append(f"--folio: marquee not at full forward speed after scrolling down ({a['ts']:.2f})")
+                if not (-.95 < mid["ts"] < .95): fails.append(f"--folio: marquee SNAPPED on reversal (ts {mid['ts']:.2f} 90 ms later)")
+                if c1["ts"] > -.9: fails.append(f"--folio: marquee did not reverse after scrolling up (ts {c1['ts']:.2f})")
+                dp = (c2["pos"] - c1["pos"]) % 1
+                if not (dp > .5): fails.append(f"--folio: marquee position is not running backward (dpos {dp:.3f})")
+                # 3 · preview: lag in order AND converge -------------------------
+                r = pg.evaluate("()=>{const e=document.querySelector('#rows a[data-i=\"2\"]');"
+                                "e.scrollIntoView({block:'center'});const b=e.getBoundingClientRect();"
+                                "return [b.x+b.width*.3,b.y+b.height/2,b.width]}")
+                pg.wait_for_timeout(300)
+                pg.mouse.move(r[0], r[1], steps=4); pg.wait_for_timeout(1200)
+                p0 = pg.evaluate("()=>__probe.preview()")
+                strip = pg.evaluate("()=>getComputedStyle(document.querySelector('#pvStrip')).transform")
+                pg.mouse.move(r[0] + r[2]*.4, r[1], steps=1); pg.wait_for_timeout(60)
+                p1 = pg.evaluate("()=>__probe.preview()")
+                pg.wait_for_timeout(1200); p2 = pg.evaluate("()=>__probe.preview()")
+                gi = math.dist(p1["img"], p1["mouse"]); gd = math.dist(p1["dot"], p1["mouse"])
+                ci = math.dist(p2["img"], p2["mouse"]); cd = math.dist(p2["dot"], p2["mouse"])
+                print(f"        preview index {p0['index']} active {p0['active']} w {p0['w']:.0f}px; "
+                      f"60ms gap img {gi:.1f} dot {gd:.1f}; settled img {ci:.2f} dot {cd:.2f}")
+                if not p0["active"] or p0["index"] != 2 or p0["w"] < 100:
+                    fails.append(f"--folio: hovering row 2 did not open its preview ({p0})")
+                if strip in ("none", ""):
+                    fails.append("--folio: preview strip never moved to the hovered project")
+                if not (gi > gd > 1):
+                    fails.append(f"--folio: followers do not lag in order (image {gi:.1f} must exceed dot {gd:.1f} > 1)")
+                if ci > 2 or cd > 2:
+                    fails.append(f"--folio: followers never converged (image {ci:.2f}, dot {cd:.2f})")
 
         if args.flipbook:
             need = ("frameCount", "active", "opacities", "scrub", "scrubV",

@@ -67,7 +67,7 @@ footer code{font-family:var(--mono);font-size:12px;background:var(--tag);padding
 
 <header>
   <p class="eyebrow">motion-web / cases</p>
-  <h1>Seven pages that <em>run</em>.</h1>
+  <h1>Eight pages that <em>run</em>.</h1>
   <p class="lede">每个 case 是一个单文件 HTML，跑得起来，过 <code>verify_case.py</code>。
   机制层照搬，皮层一律不许照搬。点 LIVE 让某一格接管鼠标，点名字全屏打开。</p>
 </header>
@@ -103,6 +103,9 @@ const CASES = [
   { dir:"lyre-crows", title:"The Lyre & the Ink Crows",
     teach:"<b>因果生态，不是时间轴</b>。拨弦抖出一个词，转向的墨鸦追上去吃掉它，然后<b>用吃到的词改写自己的尾巴</b>。源头限流加产物无条件衰减，是这个闭环不变成噪声的全部原因；转向钳制的是力不是速度，这才有转弯半径。",
     meta:["Canvas 2D","--lyre"] },
+  { dir:"magnet-folio", title:"Mila Ostrova — a magnetic folio",
+    teach:"<b>从线上站点的源码复刻，不是从截图猜</b>。磁吸按钮是一对弹簧：跟随时临界阻尼，离开时 ζ≈.27 <b>会回弹过零</b>；填充椭圆每次进入前先跳回 +76%，所以永远从下往上涨；名字跑马灯的 timeScale 朝滚动方向缓动而不是瞬切；三速光标跟随与帧率无关；曲边幕布 = 裁剪盒的高度动画 + 745% 椭圆。原生滚动，零依赖。",
+    meta:["DOM + SVG","--folio"] },
 ];
 
 const grid = document.getElementById("grid");
