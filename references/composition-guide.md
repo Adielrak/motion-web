@@ -113,6 +113,9 @@ Rules:
 | **Depth-slice parallax** | One PNG sliced into part layers at real heights (preserve-3d) | Devices, machinery, layered illustration | Retro-console hero parts |
 | **Fake-light hero** | Mouse-driven masked gradient highlight/shade on flat cutout | "3D-looking" product from one image | Retro-console hero, seafood hero |
 | **Desk-toy physics** | Items sit with contact shadows; fast primary motion makes them hop with squash landing | Studio/workshop scenes, collections | Desk-toy studio scene |
+| **Ringing magnet** | Control translates toward the pointer (normalised offset × strength, label at half), released on an under-damped spring that overshoots past rest | Portfolios, agency CTAs, anything with a few big round buttons | `cases/magnet-folio` |
+| **Direction-steered marquee** | Time-driven name/headline loop whose speed eases to ±1 with the sign of the last scroll delta | Personal brands, event names, a hero that must never look parked | `cases/magnet-folio` |
+| **Lagging list preview** | Hover a text row, a square window trails the cursor (1/12) with a faster dot on top (1/7); inside, a strip slides to −i/count | Case lists, archives, changelogs | `cases/magnet-folio` |
 | **Frame-scrub + full-page linkage** | Every layer (headline, blob, chrome) moves at a distinct depth gain off one scrub value | Any hero — this is what makes pages feel alive | All three |
 | **Weave-in** | Scroll advances a weft line down a fixed loom canvas; cloth accumulates row by row behind a travelling shuttle, loose warp above the fell line, woven pattern below | Craft, manufacture, anything that is *made* rather than shown; binary/encoding stories | Jacquard scroll demo (2026-08) |
 | **Erase-to-reveal** | A held pointer wipes a layer away *along the path the hand actually travelled*; let go and it draws itself back in | Archival, restoration, excavation, "what's underneath" | Heritage-ruins scrollytelling (2026-08) |

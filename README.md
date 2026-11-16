@@ -1,7 +1,7 @@
 # motion-web
 
 > **Build motion-first, high-touch creative websites on vanilla Three.js / Canvas 2D / WebGL / CSS. A Claude Agent Skill with real-world physics, token discipline, and automated headless verification.**  
-> **动效即材质：面向 Agent 与前端工程师的高手感交互动效体系。内置 7 大完整案例、物理阻尼求解器、排版规范与自动化 Headless 验证判据。**
+> **动效即材质：面向 Agent 与前端工程师的高手感交互动效体系。内置 8 大完整案例、物理阻尼求解器、排版规范与自动化 Headless 验证判据。**
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](LICENSE)
 [![Type](https://img.shields.io/badge/Type-Agent%20Skill-333.svg)](SKILL.md)
@@ -32,7 +32,7 @@ Every case and blueprint enforces real physical laws (spring-damper systems, ani
 
 ---
 
-### 🌟 Seven Interactive Cases (All 100% Runnable & Verified)
+### 🌟 Eight Interactive Cases (All 100% Runnable & Verified)
 
 All cases are single-file HTML pages that run standalone without build tools or external CDN dependencies. Every case passes strict assertions in `verify_case.py`.
 
@@ -87,6 +87,13 @@ All cases are single-file HTML pages that run standalone without build tools or 
       <a href="cases/lyre-crows/index.html">▶ Live Page</a> | <a href="cases/lyre-crows/README.md">📖 Breakdown</a>
     </td>
   </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <b>08 · magnet-folio (Magnetic Folio)</b><br/>
+      <sub>A portfolio rebuilt from a live site's source: ringing magnets, a direction-aware marquee, a lagging cursor preview, curved curtains</sub><br/>
+      <a href="cases/magnet-folio/index.html">▶ Live Page</a> | <a href="cases/magnet-folio/README.md">📖 Breakdown</a>
+    </td>
+  </tr>
 </table>
 
 ---
@@ -107,7 +114,7 @@ git clone https://github.com/feitangyuan/motion-web.git ~/.agents/skills/motion-
 
 ### 🧪 Automated Verification
 
-Verify all 7 cases with Playwright headless oracles:
+Verify all 8 cases with Playwright headless oracles:
 ```bash
 # Verify all cases
 python3 scripts/verify_case.py cases/string-clock/index.html  --strings
@@ -117,6 +124,7 @@ python3 scripts/verify_case.py cases/wheel-rail/index.html    --rail
 python3 scripts/verify_case.py cases/toy-flipbook/index.html  --min-shapes 1 --flipbook
 python3 scripts/verify_case.py cases/char-curtain/index.html  --min-shapes 1 --curtain
 python3 scripts/verify_case.py cases/lyre-crows/index.html    --min-shapes 1 --lyre
+python3 scripts/verify_case.py cases/magnet-folio/index.html  --folio
 ```
 
 Launch the local interactive gallery:
@@ -146,7 +154,7 @@ python3 -m http.server 8899 -d cases/
 
 ---
 
-### 7 大实测案例一览
+### 8 大实测案例一览
 
 | 案例 | 机制核心 | 技术栈 | 验收判据 |
 |---|---|---|---|
@@ -157,6 +165,7 @@ python3 -m http.server 8899 -d cases/
 | [`toy-flipbook`](cases/toy-flipbook/) | **零 DCC 深度旋转**：4 张预渲染 Yaw 角度帧，弹簧位移通过 Math.round 硬切，11Hz 阶梯抖动。 | Canvas 2D / DOM + rAF | `--min-shapes 1 --flipbook` |
 | [`char-curtain`](cases/char-curtain/) | **绳排非网布**：576 个字符悬挂在 24 条独立 Verlet 绳上，列间零水平约束，指针掠过如撩开帘幕。 | Canvas 2D + Verlet | `--min-shapes 1 --curtain` |
 | [`lyre-crows`](cases/lyre-crows/) | **因果生态闭环**：拨弦抖出词句，墨鸦转向猎食并改写自身尾迹；转向钳制加速度保留转弯半径。 | Canvas 2D + Steering | `--min-shapes 1 --lyre` |
+| [`magnet-folio`](cases/magnet-folio/) | **源码级复刻作品集**：磁吸按钮离开时欠阻尼回弹，跑马灯随滚动方向缓动换向，三速光标预览，曲边幕布。原生滚动零依赖。 | DOM + SVG + rAF | `--folio` |
 
 ---
 
@@ -168,7 +177,7 @@ motion-web/
 ├── LICENSE                  # CC BY-NC 4.0 许可证（非商用）
 ├── README.md                # 规范与展示文档
 │
-├── cases/                   # 7 大完整、可运行、可验证的交互案例
+├── cases/                   # 8 大完整、可运行、可验证的交互案例
 │   ├── index.html           # 案例画廊入口
 │   ├── AUTHORING.md         # 案例开发与判据编写规范
 │   ├── string-clock/        # 软体弹性绳索时钟
@@ -177,7 +186,8 @@ motion-web/
 │   ├── wheel-rail/          # 滚轮驱动视差轨道
 │   ├── toy-flipbook/        # 硬切翻页与阶梯抖动
 │   ├── char-curtain/        # 独立 Verlet 绳排门帘
-│   └── lyre-crows/          # 因果生态文字猎鸟
+│   ├── lyre-crows/          # 因果生态文字猎鸟
+│   └── magnet-folio/        # 磁吸按钮作品集（源码级复刻）
 │
 ├── references/              # 深入规范：物理阻尼、排版尺度、组件方言、生产级打磨
 │   ├── physics.md           # 弹簧阻尼模型与数学求解
